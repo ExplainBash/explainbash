@@ -2,7 +2,7 @@
 from nlgeval import compute_metrics
 from tqdm import tqdm
 import pandas as pd
-from IR.FaissDemo import Retrieval
+from Information_Retrieval import Retrieval
 import time
 
 # 训练集
