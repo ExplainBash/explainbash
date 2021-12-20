@@ -1,1 +1,41 @@
+# encoding=utf-8
+from nlgeval import compute_metrics
+from tqdm import tqdm
+import pandas as pd
+from IR.FaissDemo import Retrieval
+import time
 
+# 训练集
+df = pd.read_csv("../data/train_after.csv")
+train_code_list = df['cmd'].tolist()
+train_nl_list = df['nl'].tolist()
+
+# 测试集
+df = pd.read_csv("../data/test_after.csv")
+test_code_list = df['cmd'].tolist()
+test_nl_list = df['nl'].tolist()
+
+#检索(使用Bert-whitening操作)
+explainbash = Retrieval(dim=256,whitening_file='../model/bash_code_vector_whitening.pkl', kernel_file='../model/bash_kernel.pkl',
+                  bias_file='../model/bash_bias.pkl', train_code_list = train_code_list, train_nl_list=train_nl_list)
+explainbash.encode_file()
+
+print("加载索引")
+explainbash.build_index(n_list=1)
+explainbash.index.nprob = 1
+
+def get_sim_info(code):
+    sim_code, sim_nl = explainbash.single_query(code, topK=8)
+    return {'sim_code':sim_code, 'sim_nl':sim_nl}
+
+if __name__ == "__main__":
+    result_list = []
+    start_time = time.time()
+    for i in tqdm(range(len(test_code_list))):
+        result_list.append(get_sim_info(test_code_list[i])['sim_nl'].lower())
+    end_time=time.time()
+    print(end_time-start_time)
+    df = pd.DataFrame(result_list)
+    df.to_csv("../result/pred_ir_edit.csv", index=False, header=None)
+    compute_metrics(hypothesis='../result/pred_ir_edit.csv',
+                    references=['../result/nl_dl.csv'], no_glove=True, no_skipthoughts=True)
