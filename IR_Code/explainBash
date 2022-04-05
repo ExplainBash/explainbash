@@ -25,7 +25,7 @@ explainbash.build_index(n_list=1)
 explainbash.index.nprob = 1
 
 def get_sim_info(code):
-    sim_code, sim_nl = explainbash.single_query(code, topK=8)
+    sim_code, sim_nl = explainbash.single_query(code, topK=8)  #topk设置为8
     return {'sim_code':sim_code, 'sim_nl':sim_nl}
 
 if __name__ == "__main__":
@@ -37,5 +37,6 @@ if __name__ == "__main__":
     print(end_time-start_time)
     df = pd.DataFrame(result_list)
     df.to_csv("../result/pred_ir_edit.csv", index=False, header=None)
+    #生成的代码注释和真实注释对比计算指标值
     compute_metrics(hypothesis='../result/pred_ir_edit.csv',
                     references=['../result/nl_dl.csv'], no_glove=True, no_skipthoughts=True)
