@@ -68,9 +68,6 @@ class Retrieval(object):
         body = sents_to_vecs([code], tokenizer, model, ir=True)    #转换成向量,body的shape[1,768]
         body = transform_and_normalize(body, self.kernel, self.bias)  #body的shape[1,256]
         vec = body[[0]].reshape(1, -1).astype('float32')  # body的shape[1,256]
-        #不使用whitening操作使用下面两行代码
-        # body = normalize(body)  #body的shape[1,768]
-        # vec = body.reshape(1, -1).astype('float32')  #body的shape[1,768]
         _, sim_idx = self.index.search(vec, topK)   #faiss库执行搜索
         sim_idx = sim_idx[0].tolist()
         max_score = 0
