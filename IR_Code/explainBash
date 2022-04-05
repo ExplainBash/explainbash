@@ -6,12 +6,12 @@ from Information_Retrieval import Retrieval
 import time
 
 # 训练集
-df = pd.read_csv("../data/train_after.csv")
+df = pd.read_csv("../dataset/train.csv")
 train_code_list = df['cmd'].tolist()
 train_nl_list = df['nl'].tolist()
 
 # 测试集
-df = pd.read_csv("../data/test_after.csv")
+df = pd.read_csv("../dataset/test.csv")
 test_code_list = df['cmd'].tolist()
 test_nl_list = df['nl'].tolist()
 
